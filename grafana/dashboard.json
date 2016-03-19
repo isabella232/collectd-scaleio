@@ -17,16 +17,23 @@
         {
           "aliasColors": {
             "Allocated": "#E5AC0E",
+            "Allocated (not stacked)": "#CCA300",
+            "Available": "#508642",
+            "Degraded": "#C15C17",
             "Failed": "#890F02",
-            "Useable": "#82B5D8",
-            "Used": "#3F6833"
+            "Raw": "#DEDAF7",
+            "Spare": "#82B5D8",
+            "Unreachable": "#E24D42",
+            "Unused": "#3F6833",
+            "Useable": "#F9E2D2",
+            "Used": "#0A437C"
           },
           "bars": false,
           "datasource": "__dsname__",
           "decimals": null,
           "editable": true,
           "error": false,
-          "fill": 1,
+          "fill": 0,
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
@@ -66,7 +73,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Useable",
+              "alias": "Failed",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -83,8 +90,8 @@
                 }
               ],
               "measurement": "scaleio_pool_value",
-              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'useable_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
-              "refId": "A",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'failed_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "D",
               "resultFormat": "time_series",
               "select": [
                 [
@@ -110,154 +117,7 @@
                   "condition": "AND",
                   "key": "type_instance",
                   "operator": "=",
-                  "value": "useable_bytes"
-                }
-              ]
-            },
-            {
-              "alias": "Used",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "scaleio_pool_value",
-              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'used_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "instance",
-                  "operator": "=~",
-                  "value": "/$StoragePool$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "type_instance",
-                  "operator": "=",
-                  "value": "used_bytes"
-                }
-              ]
-            },
-            {
-              "alias": "Allocated",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "scaleio_pool_value",
-              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'allocated_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
-              "refId": "C",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "instance",
-                  "operator": "=~",
-                  "value": "/$StoragePool$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "type_instance",
-                  "operator": "=",
-                  "value": "allocated_bytes"
-                }
-              ]
-            },
-            {
-              "alias": "Unreachable",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "scaleio_pool_value",
-              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'unreachable_unused_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
-              "refId": "F",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "instance",
-                  "operator": "=~",
-                  "value": "/$StoragePool$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "type_instance",
-                  "operator": "=",
-                  "value": "unreachable_unused_bytes"
+                  "value": "failed_bytes"
                 }
               ]
             },
@@ -311,7 +171,7 @@
               ]
             },
             {
-              "alias": "Failed",
+              "alias": "Unreachable",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -328,8 +188,8 @@
                 }
               ],
               "measurement": "scaleio_pool_value",
-              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'failed_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
-              "refId": "D",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'unreachable_unused_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "F",
               "resultFormat": "time_series",
               "select": [
                 [
@@ -355,7 +215,7 @@
                   "condition": "AND",
                   "key": "type_instance",
                   "operator": "=",
-                  "value": "failed_bytes"
+                  "value": "unreachable_unused_bytes"
                 }
               ]
             },
@@ -376,7 +236,7 @@
                   "type": "fill"
                 }
               ],
-              "hide": true,
+              "hide": false,
               "measurement": "scaleio_pool_value",
               "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'spare_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
               "refId": "G",
@@ -408,6 +268,202 @@
                   "value": "spare_bytes"
                 }
               ]
+            },
+            {
+              "alias": "Used",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'used_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "used_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Available",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'available_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "available_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Allocated",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'allocated_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "allocated_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Useable",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'useable_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "H",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "useable_bytes"
+                }
+              ]
             }
           ],
           "timeFrom": null,
@@ -415,7 +471,7 @@
           "title": "Real Capacity",
           "tooltip": {
             "shared": true,
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
           "type": "graph",
           "x-axis": true,
@@ -1083,6 +1139,1150 @@
       "scopedVars": {},
       "showTitle": true,
       "title": "Storage Pool $StoragePool"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {
+            "Allocated": "#E5AC0E",
+            "Allocated (not stacked)": "#CCA300",
+            "Degraded": "#C15C17",
+            "Failed": "#890F02",
+            "Raw": "#BF1B00",
+            "Spare": "#82B5D8",
+            "Unreachable": "#6D1F62",
+            "Unused": "#3F6833",
+            "Useable": "#82B5D8",
+            "Used": "#0A437C"
+          },
+          "bars": false,
+          "datasource": "__dsname__",
+          "decimals": null,
+          "editable": true,
+          "error": false,
+          "fill": 2,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 5,
+          "interval": ">10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "scopedVars": {},
+          "seriesOverrides": [
+            {
+              "alias": "/Allocated/",
+              "fill": 0,
+              "linewidth": 2,
+              "stack": false
+            },
+            {
+              "alias": "/Raw/",
+              "stack": false
+            }
+          ],
+          "span": 6,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Failed",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'failed_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "D",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "failed_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Degraded",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'degraded_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "E",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "degraded_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Unreachable",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'unreachable_unused_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "F",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "unreachable_unused_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Spare",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'spare_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "G",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "spare_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Used",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'used_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "used_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Available",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'available_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "available_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Allocated (not stacked)",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'allocated_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "allocated_bytes"
+                }
+              ]
+            },
+            {
+              "alias": "Raw",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": true,
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'raw_bytes' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "H",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "raw_bytes"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Real Capacity",
+          "tooltip": {
+            "shared": true,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "bytes",
+            "short"
+          ]
+        },
+        {
+          "aliasColors": {
+            "Allocated": "#E5AC0E",
+            "Read": "#447EBC",
+            "Read IOPS": "#82B5D8",
+            "Useable": "#82B5D8",
+            "Used": "#3F6833",
+            "Write": "#BF1B00",
+            "Write IOPS": "#E24D42"
+          },
+          "bars": false,
+          "datasource": "__dsname__",
+          "decimals": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 6,
+          "interval": ">10s",
+          "isNew": true,
+          "leftYAxisLabel": "Throughput",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "rightYAxisLabel": "",
+          "scopedVars": {},
+          "seriesOverrides": [
+            {
+              "alias": "Write IOPS",
+              "yaxis": 2
+            },
+            {
+              "alias": "Read IOPS",
+              "yaxis": 2
+            }
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Read",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'read_bps' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "read_bps"
+                }
+              ]
+            },
+            {
+              "alias": "Write",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'write_bps' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "write_bps"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Workload Throughput",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "Bps",
+            "none"
+          ]
+        },
+        {
+          "aliasColors": {
+            "Allocated": "#E5AC0E",
+            "Read": "#447EBC",
+            "Read IOPS": "#82B5D8",
+            "Rebalance IOPS": "#3F6833",
+            "Rebuild": "#E0752D",
+            "Rebuild IOPS": "#EAB839",
+            "Useable": "#82B5D8",
+            "Used": "#3F6833",
+            "Write": "#BF1B00",
+            "Write IOPS": "#E24D42"
+          },
+          "bars": false,
+          "datasource": "__dsname__",
+          "decimals": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 7,
+          "interval": ">10s",
+          "isNew": true,
+          "leftYAxisLabel": "Throughput",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "rightYAxisLabel": "IOPS",
+          "scopedVars": {},
+          "seriesOverrides": [
+            {
+              "alias": "Write IOPS",
+              "yaxis": 2
+            },
+            {
+              "alias": "Read IOPS",
+              "yaxis": 2
+            },
+            {
+              "alias": "Rebuild IOPS",
+              "yaxis": 2
+            },
+            {
+              "alias": "Rebuild",
+              "yaxis": 1
+            },
+            {
+              "alias": "Rebalance IOPS",
+              "yaxis": 2
+            }
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Rebalance",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'rebalance_bps' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "rebalance_bps"
+                }
+              ]
+            },
+            {
+              "alias": "Rebalance IOPS",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'rebalance_iops' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "rebalance_iops"
+                }
+              ]
+            },
+            {
+              "alias": "Rebuild",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'rebuild_bps' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "rebuild_bps"
+                }
+              ]
+            },
+            {
+              "alias": "Rebuild IOPS",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'rebuild_iops' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "D",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "rebuild_iops"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Rebuild/Rebalance",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "Bps",
+            "iops"
+          ]
+        },
+        {
+          "aliasColors": {
+            "Allocated": "#E5AC0E",
+            "Read": "#447EBC",
+            "Read IOPS": "#447EBC",
+            "Useable": "#82B5D8",
+            "Used": "#3F6833",
+            "Write": "#BF1B00",
+            "Write IOPS": "#BF1B00"
+          },
+          "bars": false,
+          "datasource": "__dsname__",
+          "decimals": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 8,
+          "interval": ">10s",
+          "isNew": true,
+          "leftYAxisLabel": "Throughput",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "rightYAxisLabel": "",
+          "scopedVars": {},
+          "seriesOverrides": [
+            {
+              "alias": "Write IOPS",
+              "yaxis": 1
+            },
+            {
+              "alias": "Read IOPS",
+              "yaxis": 1
+            }
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Read IOPS",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'read_iops' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "D",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "read_iops"
+                }
+              ]
+            },
+            {
+              "alias": "Write IOPS",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "scaleio_pool_value",
+              "query": "SELECT mean(\"value\") FROM \"scaleio_pool_value\" WHERE \"instance\" =~ /$StoragePool$/ AND \"type_instance\" = 'write_iops' AND $timeFilter GROUP BY time($interval) fill(null)",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "instance",
+                  "operator": "=~",
+                  "value": "/$StoragePool$/"
+                },
+                {
+                  "condition": "AND",
+                  "key": "type_instance",
+                  "operator": "=",
+                  "value": "write_iops"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Workload IOPS",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "iops",
+            "none"
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": 1458379679497,
+      "repeatRowId": 1,
+      "scopedVars": {},
+      "showTitle": true,
+      "title": "Storage Pool $StoragePool"
     }
   ],
   "schemaVersion": 8,
@@ -1111,7 +2311,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -1142,5 +2342,5 @@
   },
   "timezone": "browser",
   "title": "ScaleIO",
-  "version": 14
+  "version": 20
 }
