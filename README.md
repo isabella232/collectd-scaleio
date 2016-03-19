@@ -26,7 +26,9 @@ The plugin needs to be configured in collectd as follows.
 </Plugin>
 ```
 
-# Grafana dashboard
+## Grafana dashboard
+![Sample ScaleIO dashboard (on remove of SDS)](public/force_remove_sds.png "Sample ScaleIO dashboard (on remove of SDS)")
+![Sample ScaleIO dashboard (data growth)](public/pool_growth.png "Sample ScaleIO dashboard (data growth)")
 Replace MY_DATASOURCE_NAME with the name of your grafana datasource that contains the collectd data.
 ```bash
 sed -i 's/__dsname__/MY_DATASOURCE_NAME/g' grafana/dashboard.json
