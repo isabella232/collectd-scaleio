@@ -5,10 +5,11 @@ set -x
 
 VERSION='1.0'
 ITERATION=${1:-1}
-TARGET_DIR=${2:-/usr/share/grafana/public/dashboards/}
+PKG_TYPE=${2:-rpm}
+TARGET_DIR=${3:-/usr/share/grafana/public/dashboards/}
 
 fpm \
--t rpm \
+-t $PKG_TYPE \
 -s dir \
 -n grafana-dashboard-scaleio \
 -v $VERSION \
