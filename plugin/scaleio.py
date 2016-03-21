@@ -1,20 +1,6 @@
 # Collectd plugin for ScaleIO
 
-# Sample configuration
-#    <LoadPlugin "python">
-#        Globals true
-#    </LoadPlugin>
-#    <Plugin "python">
-#        ModulePath "/usr/share/collectd/"
-#        Import scaleio
-#        <Module scaleio>
-#            debug false
-#            cluster myClusterNameToDisplay
-#            verbose false
-#            scli_wrap "/usr/bin/si"
-#        </Module>
-#    </Plugin>
-
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
 
 import collectd
 import subprocess
@@ -24,13 +10,14 @@ import re
 import json
 
 CONF = {
-    'debug':     False,
-    'verbose':   False,
-    'scli_user': 'admin',
-    'scli_password': 'password',
-    'cluster':   'myCluster',
-    'pools':     [],  #TODO: only report pools that are specified
-    'scli_wrap': '/usr/bin/si',
+    'debug':          False,
+    'verbose':        False,
+    'scli_user':      'admin',
+    'scli_password':  'password',
+    'cluster':        'myCluster',
+    'pools':          [],
+    'scli_wrap':      '/usr/share/collectd/scli_wrap.sh',
+    'ignoreselected': False,
 }
 
 class AutoVivification(dict):
@@ -63,6 +50,8 @@ def config_callback(conf):
             CONF['scli_user'] = values[0]
         elif key == 'password':
             CONF['scli_password'] = values[0]
+        elif key == 'ignoreselected':
+            CONF['ignoreselected'] = str2bool(values[0])
         else:
             collectd.warning('ScaleIO: unknown config key: %s' % (key))
 
@@ -76,6 +65,7 @@ def read_callback(input_data=None):
 def dispatch_value(plugin, value, plugin_instance=None, type_instance=None):
     val = collectd.Values(type = 'gauge')
 
+    my_verbose('Dispatch value: %s %s %s %s %s' % (CONF['cluster'], plugin, plugin_instance, type_instance, value))
     val.host = CONF['cluster']
     val.plugin = 'scaleio_' + plugin
     val.plugin_instance = plugin_instance
@@ -84,28 +74,41 @@ def dispatch_value(plugin, value, plugin_instance=None, type_instance=None):
     val.dispatch()
 
 
+# Query ScaleIO for pool metrics, and report them to collectd
 def dispatch_pools():
-
-
     pools = read_properties('--query_properties', '--object_type', 'STORAGE_POOL', '--all_objects',
         '--properties', 'NAME,MAX_CAPACITY_IN_KB,SPARE_CAPACITY_IN_KB,THIN_CAPACITY_ALLOCATED_IN_KB,'
                         'THICK_CAPACITY_IN_USE_IN_KB,UNUSED_CAPACITY_IN_KB,SNAP_CAPACITY_IN_USE_OCCUPIED_IN_KB,'
                         'CAPACITY_IN_USE_IN_KB,UNREACHABLE_UNUSED_CAPACITY_IN_KB,DEGRADED_HEALTHY_CAPACITY_IN_KB,'
-                        'FAILED_CAPACITY_IN_KB,SPARE_CAPACITY_IN_KB,'
-                        'USER_DATA_READ_BWC,USER_DATA_WRITE_BWC,REBALANCE_READ_BWC,'
-                        'FWD_REBUILD_READ_BWC,BCK_REBUILD_READ_BWC'
+                        'FAILED_CAPACITY_IN_KB,USER_DATA_READ_BWC,USER_DATA_WRITE_BWC,REBALANCE_READ_BWC,'
+                        'FWD_REBUILD_READ_BWC,BCK_REBUILD_READ_BWC,AVAILABLE_FOR_THICK_ALLOCATION_IN_KB'
             )
 
+    # We have nothing to report
+    if pools == None:
+        return
+
     for pool_id, pool in pools.iteritems():
+        # skip pools based on configuration
+        if len(CONF['pools']) > 0 and not CONF['ignoreselected'] and pool['NAME'] not in CONF['pools']:
+            my_verbose('Pool %s is not in pools configuration and ignoreselected is false -> skipping' % (pool['NAME']))
+            continue
+        if len(CONF['pools']) > 0 and CONF['ignoreselected'] and pool['NAME'] in CONF['pools']:
+            my_verbose('Pool %s is in pools configuration and ignoreselected is true -> skipping' % (pool['NAME']))
+            continue
+	
         # raw capacity
         dispatch_value('pool', long(pool['MAX_CAPACITY_IN_KB']) / 2, pool['NAME'], 'raw_bytes')
 
         # useable capacity
         dispatch_value('pool',
-            (long(pool['UNUSED_CAPACITY_IN_KB']) + long(pool['CAPACITY_IN_USE_IN_KB']) -
-                long(pool['UNREACHABLE_UNUSED_CAPACITY_IN_KB'])) / 2 - long(pool['FAILED_CAPACITY_IN_KB'])-
-                long(pool['DEGRADED_HEALTHY_CAPACITY_IN_KB']),
+            long(pool['AVAILABLE_FOR_THICK_ALLOCATION_IN_KB']) + long(pool['CAPACITY_IN_USE_IN_KB']) / 2,
             pool['NAME'], 'useable_bytes')
+
+        # available capacity
+        dispatch_value('pool',
+            long(pool['AVAILABLE_FOR_THICK_ALLOCATION_IN_KB']),
+            pool['NAME'], 'available_bytes')
 
         # used capacity
         dispatch_value('pool', (long(pool['CAPACITY_IN_USE_IN_KB'])) / 2, pool['NAME'], 'used_bytes')
@@ -123,10 +126,10 @@ def dispatch_pools():
         dispatch_value('pool', long(pool['DEGRADED_HEALTHY_CAPACITY_IN_KB']), pool['NAME'], 'degraded_bytes')
 
         # failed capacity
-        dispatch_value('pool', long(pool['FAILED_CAPACITY_IN_KB']), pool['NAME'], 'failed_bytes')
+        dispatch_value('pool', long(pool['FAILED_CAPACITY_IN_KB']) / 2, pool['NAME'], 'failed_bytes')
 
         # spare capacity
-        dispatch_value('pool', long(pool['SPARE_CAPACITY_IN_KB']), pool['NAME'], 'spare_bytes')
+        dispatch_value('pool', long(pool['SPARE_CAPACITY_IN_KB']) / 2, pool['NAME'], 'spare_bytes')
 
 
 
@@ -165,11 +168,14 @@ def read_properties(*cmd):
     properties = AutoVivification()
     out = None
     real_cmd = (CONF['scli_wrap'],CONF['scli_user'],CONF['scli_password']) + cmd
-    my_debug('Executing command: %s' % (" ".join(str(v) for v in real_cmd)))
+    my_verbose('Executing command: %s %s ******* %s' % (CONF['scli_wrap'], CONF['scli_user'], " ".join(str(v) for v in cmd)))
 
     try:
         out = subprocess.check_output(real_cmd)
     except Exception as e:
+        if e.returncode == 129:
+            my_debug('ScaleIO: running on secondary MDM.')
+            return
         collectd.error('ScaleIO: error on executing scli command %s --- %s' %
             (e, traceback.format_exc()))
         return
@@ -186,7 +192,7 @@ def read_properties(*cmd):
             if kv_match:
                 properties[group_name][kv_match.group(1)] = kv_match.group(2)
 
-    my_debug('Read properties: %s' % (json.dumps(properties)))
+    my_verbose('Read properties: %s' % (json.dumps(properties)))
     rectify_dict(properties)
     my_debug('Properties after rectify: %s' % (json.dumps(properties)))
     return properties
