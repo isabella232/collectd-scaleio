@@ -10,7 +10,6 @@ TARGET_DIR=${2:-/usr/share/collectd/python}
 fpm \
 -t rpm \
 -s dir \
--d collectd-plugin-python \
 -n collectd-plugin-scaleio \
 -v $VERSION \
 --iteration $ITERATION \
