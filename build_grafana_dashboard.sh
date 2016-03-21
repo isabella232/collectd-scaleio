@@ -10,7 +10,7 @@ TARGET_DIR=${2:-/usr/share/grafana/public/dashboards/}
 fpm \
 -t rpm \
 -s dir \
--n collectd-plugin-scaleio \
+-n grafana-dashboard-scaleio \
 -v $VERSION \
 --iteration $ITERATION \
 --url "https://github.com/swisscom/collectd-scaleio" \
