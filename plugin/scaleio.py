@@ -171,14 +171,16 @@ def read_properties(*cmd):
     my_verbose('Executing command: %s %s ******* %s' % (CONF['scli_wrap'], CONF['scli_user'], " ".join(str(v) for v in cmd)))
 
     try:
-        out = subprocess.check_output(real_cmd)
+        out = subprocess.check_output(real_cmd, stderr=subprocess.STDOUT)
+        my_debug('scli output: ' + out)
     except Exception as e:
-        if e.returncode == 129:
-            my_debug('ScaleIO: running on secondary MDM.')
-            return
         collectd.error('ScaleIO: error on executing scli command %s --- %s' %
             (e, traceback.format_exc()))
         return
+
+    if 'Failed to connect to MDM 127.0.0.1:6611' in out:
+        my_verbose('plugin is running on non-primary/active MDM, skipping data collection')
+
 
     group_name = None
     group_regex = re.compile("^([^\s]+)\s([^:]+)")
