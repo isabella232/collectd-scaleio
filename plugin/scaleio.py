@@ -125,7 +125,7 @@ def dispatch_pools():
         # failed capacity
         dispatch_value('pool', long(pool['FAILED_CAPACITY_IN_KB']), pool['NAME'], 'failed_bytes')
 
-        # failed capacity
+        # spare capacity
         dispatch_value('pool', long(pool['SPARE_CAPACITY_IN_KB']), pool['NAME'], 'spare_bytes')
 
 
