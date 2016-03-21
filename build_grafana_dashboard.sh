@@ -5,20 +5,17 @@ set -x
 
 VERSION='1.0'
 ITERATION=${1:-1}
-TARGET_DIR=${2:-/usr/share/collectd/python}
-
-# prepare directory
-mkdir -p target
+TARGET_DIR=${2:-/usr/share/grafana/public/dashboards/}
 
 fpm \
 -t rpm \
 -s dir \
--n collectd-scaleio \
+-n collectd-plugin-scaleio \
 -v $VERSION \
 --iteration $ITERATION \
 --url "https://github.com/swisscom/collectd-scaleio" \
 --rpm-user root \
 --rpm-group root \
-./plugin/=$TARGET_DIR \
+./grafana/=$TARGET_DIR \
 || exit 1
 

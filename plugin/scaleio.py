@@ -16,7 +16,7 @@ CONF = {
     'scli_password':  'password',
     'cluster':        'myCluster',
     'pools':          [],
-    'scli_wrap':      '/usr/share/collectd/scli_wrap.sh',
+    'scli_wrap':      '/usr/share/collectd/python/scli_wrap.sh',
     'ignoreselected': False,
 }
 
@@ -96,7 +96,7 @@ def dispatch_pools():
         if len(CONF['pools']) > 0 and CONF['ignoreselected'] and pool['NAME'] in CONF['pools']:
             my_verbose('Pool %s is in pools configuration and ignoreselected is true -> skipping' % (pool['NAME']))
             continue
-	
+
         # raw capacity
         dispatch_value('pool', long(pool['MAX_CAPACITY_IN_KB']) / 2, pool['NAME'], 'raw_bytes')
 
