@@ -73,3 +73,7 @@ The plugin collects the following data
   - rebalance throughput
   - rebuild iops
   - rebuild throughput
+
+## License
+
+See the [LICENSE](LICENSE.txt) file for license rights and limitations (MIT).
