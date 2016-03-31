@@ -17,7 +17,7 @@ fpm \
 --url "https://github.com/swisscom/collectd-scaleio" \
 --rpm-user root \
 --rpm-group root \
---after-install 
-./plugin/=$TARGET_DIR \
+--after-install after_plugin_install.sh
+../plugin/=$TARGET_DIR \
 || exit 1
 

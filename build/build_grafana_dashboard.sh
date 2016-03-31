@@ -17,6 +17,6 @@ fpm \
 --url "https://github.com/swisscom/collectd-scaleio" \
 --rpm-user root \
 --rpm-group root \
-./grafana/=$TARGET_DIR \
+../grafana/=$TARGET_DIR \
 || exit 1
 
