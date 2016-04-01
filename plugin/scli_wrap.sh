@@ -1,6 +1,6 @@
 #!/bin/bash
-USER=shift
-PASS=shift
+USER=$1; shift
+PASS=$1; shift
 
 echoerr() { echo "$@" 1>&2; }
 

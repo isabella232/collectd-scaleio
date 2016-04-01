@@ -16,7 +16,7 @@ CONF = {
     'scli_password':  'password',
     'cluster':        'myCluster',
     'pools':          [],
-    'scli_wrap':      '/usr/share/collectd/scli_wrap.sh',
+    'scli_wrap':      '/usr/share/collectd/python/scli_wrap.sh',
     'ignoreselected': False,
 }
 
@@ -96,7 +96,7 @@ def dispatch_pools():
         if len(CONF['pools']) > 0 and CONF['ignoreselected'] and pool['NAME'] in CONF['pools']:
             my_verbose('Pool %s is in pools configuration and ignoreselected is true -> skipping' % (pool['NAME']))
             continue
-	
+
         # raw capacity
         dispatch_value('pool', long(pool['MAX_CAPACITY_IN_KB']) / 2, pool['NAME'], 'raw_bytes')
 
@@ -128,7 +128,7 @@ def dispatch_pools():
         # failed capacity
         dispatch_value('pool', long(pool['FAILED_CAPACITY_IN_KB']) / 2, pool['NAME'], 'failed_bytes')
 
-        # failed capacity
+        # spare capacity
         dispatch_value('pool', long(pool['SPARE_CAPACITY_IN_KB']) / 2, pool['NAME'], 'spare_bytes')
 
 
@@ -171,14 +171,16 @@ def read_properties(*cmd):
     my_verbose('Executing command: %s %s ******* %s' % (CONF['scli_wrap'], CONF['scli_user'], " ".join(str(v) for v in cmd)))
 
     try:
-        out = subprocess.check_output(real_cmd)
+        out = subprocess.check_output(real_cmd, stderr=subprocess.STDOUT)
+        my_debug('scli output: ' + out)
     except Exception as e:
-        if e.returncode == 129:
-            my_debug('ScaleIO: running on secondary MDM.')
-            return
         collectd.error('ScaleIO: error on executing scli command %s --- %s' %
             (e, traceback.format_exc()))
         return
+
+    if 'Failed to connect to MDM 127.0.0.1:6611' in out:
+        my_verbose('plugin is running on non-primary/active MDM, skipping data collection')
+
 
     group_name = None
     group_regex = re.compile("^([^\s]+)\s([^:]+)")

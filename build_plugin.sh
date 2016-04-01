@@ -5,15 +5,13 @@ set -x
 
 VERSION='1.0'
 ITERATION=${1:-1}
-TARGET_DIR=${2:-/usr/share/collectd/python}
-
-# prepare directory
-mkdir -p target
+PKG_TYPE=${2:-rpm}
+TARGET_DIR=${3:-/usr/share/collectd/python}
 
 fpm \
--t rpm \
+-t $PKG_TYPE \
 -s dir \
--n collectd-scaleio \
+-n collectd-plugin-scaleio \
 -v $VERSION \
 --iteration $ITERATION \
 --url "https://github.com/swisscom/collectd-scaleio" \
