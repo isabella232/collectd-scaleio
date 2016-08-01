@@ -43,7 +43,7 @@ The plugin needs to be configured in collectd as follows.
 ## Grafana dashboard
 A grafana dashboard that visualizes the pool data can be found in the grafana directory.
 The dashboard is ready to be installed, which can done by either packaging it (build_grafana_dashboard.sh) or by importing the dashboard manually.  
-Make sure to replace MY_DATASOURCE_NAME with the name of your grafana datasource that contains the collectd data, before imporing/installing it.
+Make sure to replace MY_DATASOURCE_NAME with the name of your grafana datasource that contains the collectd data, before importing/installing it.
 ```bash
 sed -i 's/__dsname__/MY_DATASOURCE_NAME/g' grafana/dashboard.json
 ```
